@@ -2,17 +2,11 @@ import { z } from 'zod'
 
 const videoIdSchema = z.string().regex(/^[0-9a-f-]{36}$/i, 'Invalid video ID')
 
-const effectSchema = z.enum([
-  'none',
-  'grayscale',
-  'warm',
-  'cool',
-  'vintage',
-  'brighten',
-  'contrast',
+export const effectSchema = z.enum([
+  'none', 'grayscale', 'warm', 'cool', 'vintage', 'brighten', 'contrast',
 ])
 
-const transitionSchema = z.enum(['none', 'fade'])
+export const transitionSchema = z.enum(['none', 'fade'])
 
 const clipSchema = z.object({
   videoId: videoIdSchema,
@@ -33,16 +27,13 @@ export const editPlanSchema = z.object({
     mode: z.enum(['keep_original', 'mute']).default('keep_original'),
     volume: z.number().finite().min(0).max(2).default(1),
   }).default({ mode: 'keep_original', volume: 1 }),
-  captions: z.object({
-    enabled: z.boolean().default(false),
-    text: z.string().max(2000).default(''),
-    position: z.enum(['top', 'center', 'bottom']).default('bottom'),
-  }).default({ enabled: false, text: '', position: 'bottom' }),
   output: z.object({
     format: z.literal('mp4'),
     resolution: z.enum(['720p', '1080p']).default('720p'),
     fps: z.union([z.literal(24), z.literal(25), z.literal(30)]).default(30),
   }),
+  // The planner must disclose requested work that the current tool registry cannot execute.
+  unsupportedRequests: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
 })
 
 export type EditPlan = z.infer<typeof editPlanSchema>
