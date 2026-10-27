@@ -73,7 +73,9 @@ router.post('/', async (req, res) => {
       temporaryPaths.push(segmentPath)
 
       const filters = videoFilters(clip.effects, plan.output.resolution, plan.output.fps)
-      if (clip.transitionIn === 'fade' && index > 0) filters.push('fade=t=in:st=0:d=0.5')
+      if (clip.transitionIn === 'fade') {
+        filters.push('fade=t=in:st=0:d=0.5')
+}
 
       const args = [
         '-y', '-ss', String(clip.start), '-i', inputPath,
